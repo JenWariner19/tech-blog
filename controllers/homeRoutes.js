@@ -61,7 +61,7 @@ router.get('/blog/:id/addComment', withAuth, async (req,res) => {
     res.render('addComment', { blogData, loggedIn: req.session.loggedIn });
 });
 
-router.post("/blog/:id/addcomment", withAuth, async (req, res) => {
+router.post("/blog/:id/addComment", withAuth, async (req, res) => {
     try {
       const newComment = await Comment.create({
         user_id: req.session.user_id,
@@ -87,19 +87,81 @@ router.post("/blog/:id/addcomment", withAuth, async (req, res) => {
           },
         ],
       });
-  
-      const blog = blogData.get({ plain: true });
-  
-      res.render("blog", { blog, loggedIn: req.session.loggedIn });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json(err);
-    }
-  });
+
+    const blog = blogData.get({ plain: true });
+
+    res.render("blog", { blog, loggedIn: req.session.loggedIn });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
+router.get("/dashboard", withAuth, async (req, res) => {
+  try {
+    const blogData = await Blog.findAll({
+      where: {
+        user_id: req.session.user_id
+      },
+      include: {
+        model: User,
+        attributes: {
+          exclude: ['password']
+        }
+      }
+    });
+    const blogs = blogData.map((blog) =>
+      blog.get({ plain: true })
+    );
+    console.log(blogs);
+
+    res.render("dashboard", { blogs, loggedIn: req.session.loggedIn });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
+router.get("/dashboard/addPost", withAuth, async (req, res) => {
+  const blogData = req.session.user_id;
+  res.render("addPost", { blogData, loggedIn: req.session.loggedIn });
+});
+
+router.post("/dashboard/addPost", withAuth, async (req, res) => {
+  try {
+    const newPost = await Blog.create({
+      user_id: req.session.user_id,
+      title: req.body.title,
+      content: req.body.content,
+    });
+    const userBlogData = await Blog.findAll({
+      where: {
+        user_id: req.session.user_id
+      },
+      include: {
+        model: User,
+        attributes: {
+          exclude: ['password']
+        }
+      }
+    });
+    const blogs = userBlogData.map((blog) =>
+      blog.get({ plain: true })
+    );
+    console.log(blogs);
+
+    res.render("dashboard", { blogs, loggedIn: req.session.loggedIn });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
 
 router.get('/login', (req, res) => {
   if (req.session.logged_in) {
-    res.redirect('/profile');
+    res.redirect('/');
     return;
   }
 
