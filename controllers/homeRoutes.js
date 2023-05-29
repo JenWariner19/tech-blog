@@ -61,7 +61,7 @@ router.get('/blog/:id/addComment', withAuth, async (req,res) => {
     res.render('addComment', { blogData, loggedIn: req.session.loggedIn });
 });
 
-router.post("/blog/:id/addComment", withAuth, async (req, res) => {
+router.post('/blog/:id/addComment', withAuth, async (req, res) => {
     try {
       const newComment = await Comment.create({
         user_id: req.session.user_id,
@@ -73,7 +73,7 @@ router.post("/blog/:id/addComment", withAuth, async (req, res) => {
           {
             model: User,
             attributes: {
-              exclude: ["password"],
+              exclude: ['password'],
             },
           },
           {
@@ -81,7 +81,7 @@ router.post("/blog/:id/addComment", withAuth, async (req, res) => {
             include: [
               {
                 model: User,
-                attributes: ["username"],
+                attributes: ['username'],
               },
             ],
           },
@@ -90,14 +90,14 @@ router.post("/blog/:id/addComment", withAuth, async (req, res) => {
 
     const blog = blogData.get({ plain: true });
 
-    res.render("blog", { blog, loggedIn: req.session.loggedIn });
+    res.render('blog', { blog, loggedIn: req.session.loggedIn });
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
   }
 });
 
-router.get("/dashboard", withAuth, async (req, res) => {
+router.get('/dashboard', withAuth, async (req, res) => {
   try {
     const blogData = await Blog.findAll({
       where: {
@@ -115,7 +115,7 @@ router.get("/dashboard", withAuth, async (req, res) => {
     );
     console.log(blogs);
 
-    res.render("dashboard", { blogs, loggedIn: req.session.loggedIn });
+    res.render('dashboard', { blogs, loggedIn: req.session.loggedIn });
 
   } catch (err) {
     console.log(err);
@@ -123,12 +123,12 @@ router.get("/dashboard", withAuth, async (req, res) => {
   }
 });
 
-router.get("/dashboard/addPost", withAuth, async (req, res) => {
+router.get('/dashboard/addPost', withAuth, async (req, res) => {
   const blogData = req.session.user_id;
-  res.render("addPost", { blogData, loggedIn: req.session.loggedIn });
+  res.render('addPost', { blogData, loggedIn: req.session.loggedIn });
 });
 
-router.post("/dashboard/addPost", withAuth, async (req, res) => {
+router.post('/dashboard/addPost', withAuth, async (req, res) => {
   try {
     const newPost = await Blog.create({
       user_id: req.session.user_id,
@@ -151,11 +151,77 @@ router.post("/dashboard/addPost", withAuth, async (req, res) => {
     );
     console.log(blogs);
 
-    res.render("dashboard", { blogs, loggedIn: req.session.loggedIn });
+    res.render('dashboard', { blogs, loggedIn: req.session.loggedIn });
 
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
+  }
+});
+
+router.get('/dashboard/updateBlog/:id', withAuth, async (req, res) => {
+  try {
+    const blogData = await Blog.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+        { model: Comment,
+        include: [{
+          model: User,
+          attributes: ['username']
+        }] },
+      ],
+    });
+    const blogs = blogData.get({ plain: true });
+    res.render('updateBlog', { blogs, loggedIn: req.session.loggedIn });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
+router.put('/dashboard/updateBlog/:id', withAuth, async (req, res) => {
+  try {
+    const blogData = await Blog.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if(!blogData[0]) {
+      res.status(404).json({message: 'No user with this id!'});
+      return;
+    }
+ 
+    res.render('blog', { blogData, loggedIn: req.session.loggedIn });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
+router.delete('/dashboard/deleteBlog/:id', withAuth, async (req, res) => {
+  try {
+    const blogData = await Blog.destroy({
+      where: {
+        id: req.params.id,
+        user_id: req.session.user_id,
+      },
+    });
+
+    if (!blogData) {
+      res.status(404).json({ message: 'No blog found with this id!' });
+      return;
+    }
+    
+    res.status(200).json(blogData);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err); 
   }
 });
 
