@@ -5,14 +5,14 @@ const blogFormHandler = async (event) => {
     const content = document.querySelector('#add-blogpost-content').value.trim();
   
     if (title && content) {
-      const response = await fetch('/dashboard/addblogpost', {
+      const response = await fetch('/dashboard/addPost', {
         method: 'POST',
         body: JSON.stringify({ title, content }),
         headers: { 'Content-Type': 'application/json' },
       });
 
       if (response.ok) {
-        document.location.replace("/dashboard");
+        document.location.replace('/dashboard');
       } else {
         alert('Failed to add blogpost.');
       }
