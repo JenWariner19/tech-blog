@@ -1,4 +1,14 @@
+<div class="d-flex">
+    <div>
+        <h2>My Dashboard</h2>
+        <a href="/dashboard/addblogpost" type="button"
+            class="create-new-blogpost-btn btn btn-primary me-4 mt-2 mb-2">Create New
+            BlogPost</a>
+    </div>
+</div>
 <div>
-    <h2>My Dashboard</h2>
-    
+    <h4>My Blog Posts</h4>
+    {{#each blogs as |blog|}}
+    {{> blog-summary}}
+    {{/each}}
 </div>
