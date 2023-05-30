@@ -5,8 +5,6 @@ const updateBlogFormHandler = async (event) => {
     const content = document.querySelector('#update-blogpost-content').value.trim();
     const blogId = window.location.pathname.split("/")[3]; 
 
-    console.log(blogId);
-
     if (title && content) {
       const response = await fetch(`/dashboard/updateBlog/${blogId}`, {
         method: 'PUT',
@@ -22,6 +20,5 @@ const updateBlogFormHandler = async (event) => {
     }
   };
 
-  document
-  .querySelector('#update-blogpost')
-  .addEventListener('click', updateBlogFormHandler);
+const updateBtn = document.querySelector('#update-blogpost')
+updateBtn.addEventListener('click', updateBlogFormHandler);
