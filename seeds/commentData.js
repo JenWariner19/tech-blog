@@ -7,7 +7,7 @@ const commentData = [
         content: 'Very informative!'
     },
     {
-        user_id: 2,
+        user_id: 3,
         blog_id: 2,
         content: 'This could be very scary.'
     },

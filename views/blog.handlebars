@@ -1,16 +1,14 @@
-<div class="'d-flex">
+<div class="d-flex">
     <div class="card">
-        <h5 class="card-title p-3 mb-2 bg-black text-white">{{title}} Posted by {{user.username}} on {{format_date
-            date_posted}}</h5>
-
+        <h5 class="card-title p-3 mb-2 bg-black text-white">{{blog.title}} Posted by {{blog.user.username}} on
+            {{format_date blog.date_posted}}</h5>
         <div class="card-body">
-            <p class="card-text text-black">{{content}}</p>
-            <a href='/blog/{{blog.id}}/addComment' class="btn btn-primary">Add a Comment</a>
+            <p class="card-text text-black">{{blog.content}}</p>
+            <a href='/blog/{{blog.id}}/addComment' class="btn btn-primary mb-3">Add a Comment</a>
+            {{#each blog.comments as |comment|}}
+            {{> blog-comment}}
+            {{/each}}
         </div>
     </div>
-       <div>
-      {{#each blog.comments as |comment|}}
-      {{> blog-comment}}
-      {{/each}}
-    </div>
 </div>
+

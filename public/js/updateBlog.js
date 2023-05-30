@@ -3,12 +3,12 @@ const updateBlogFormHandler = async (event) => {
   
     const title = document.querySelector('#update-blogpost-title').value.trim()
     const content = document.querySelector('#update-blogpost-content').value.trim();
-    const blogpostId = window.location.pathname.split("/")[3]; 
+    const blogId = window.location.pathname.split("/")[3]; 
 
-    console.log(blogpostId);
+    console.log(blogId);
 
     if (title && content) {
-      const response = await fetch(`/dashboard/updateBlog/${blogpostId}`, {
+      const response = await fetch(`/dashboard/updateBlog/${blogId}`, {
         method: 'PUT',
         body: JSON.stringify({ title, content }),
         headers: { 'Content-Type': 'application/json' },
