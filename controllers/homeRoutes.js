@@ -166,7 +166,7 @@ router.get('/dashboard/updateBlog/:id', withAuth, async (req, res) => {
         {
           model: User,
           attributes: {
-            exclude: ["password"],
+            exclude: ['password'],
           },
         },
         { model: Comment,
@@ -176,6 +176,7 @@ router.get('/dashboard/updateBlog/:id', withAuth, async (req, res) => {
         }] },
       ],
     });
+  
     const blogs = blogData.get({ plain: true });
     res.render('updateBlog', { blogs, loggedIn: req.session.loggedIn });
   } catch (err) {
@@ -191,13 +192,12 @@ router.put('/dashboard/updateBlog/:id', withAuth, async (req, res) => {
         id: req.params.id,
       },
     });
-
     if(!blogData[0]) {
       res.status(404).json({message: 'No user with this id!'});
       return;
     }
  
-    res.render('blog', { blogData, loggedIn: req.session.loggedIn });
+    res.status(200).json({message: 'Blog Updated'});
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
